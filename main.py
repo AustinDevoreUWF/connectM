@@ -1,11 +1,124 @@
+import math
+
+
+EMPTY = 0
+HUMAN = 1
+AI = 2
+
 class Disc:
     "The disc object"
-    def __init__():
-        pass
-
+    def __init__(self, owner: int):
+        self.owner = owner
 "Condition for the game to be over"
-def gameOver():
-    pass
+
+def create_board(n: int):
+    #creates the board with the given size
+    return [[EMPTY] * n for _ in range(n)]
+
+
+def print_board(board):
+    n = len(board)
+    line = "+" + "+".join(["---"] * n) + "+"
+    print(line)
+    for r in range(n):
+        row = "|"
+        for c in range(n):
+            v = board[r][c]
+            ch = " " if v == EMPTY else ("X" if v == HUMAN else "O")
+            row += f" {ch} |"
+        print(row)
+        print(line)
+    print(" " + " ".join(f" {i+1}" for i in range(n)))
+    print()
+
+
+    # checks for any column where top cell is empty
+def valid_moves(board):
+    n = len(board)
+    moves = []
+    for c in range(n):
+        if board[0][c] == EMPTY:
+            moves.append(c)
+    return moves
+
+    # places the piece in the lowest empty cell of the specified column, returns False if the move is invalid
+def playerMove(board, col, player):
+    n = len(board)
+    if col < 0 or col >= n:
+        print("Invalid column. Please choose a column between 1 and", n)
+        return False
+    if board[0][col] != EMPTY:
+        print("Column is full. Please choose another column.")
+        return False
+
+    for r in range(n - 1, -1, -1):
+        if board[r][col] == EMPTY:
+            board[r][col] = player
+            return True
+    print("Column is full. Please choose another column.")
+    return False
+
+def undoMove(board, col):
+    n = len(board)
+    for r in range(n):
+        if board[r][col] != EMPTY:
+            board[r][col] = EMPTY
+            return True
+    return False
+
+def check_win(board, player, M):
+    n = len(board)
+    for r in range(n):
+        for c in range(n):
+            if board[r][c] != player:
+                continue
+    #check horizontal
+    if c + M - 1 < n:
+        ok = True
+        for k in range(M):
+            if board[r][c + k] != player:
+                ok = False
+                break
+            if ok:
+                return True
+    #check vertical
+    if c + M - 1 < n:
+        ok = True
+        for k in range(M):
+            if board[r + k][c] != player:
+                ok = False
+                break
+            if ok:
+                return True
+    
+    #check diagonal down-right
+    if c + M - 1 < n:
+        ok = True
+        for k in range(M):
+            if board[r + k][c + k] != player:
+                ok = False
+                break
+            if ok: 
+                return True
+    #check diagonal down-left
+    if c + M - 1 < n:
+        ok = True
+        for k in range(M):
+            if board[r + k][c - k] != player:
+                ok = False
+                break
+            if ok:
+                return True
+    
+    return False
+def gameOver(board, M):
+    if check_win(board, HUMAN, M):
+        return True
+    if check_win(board, AI, M):
+        return True
+    if len(valid_moves(board)) == 0:
+        return True
+    return False
 
 "User input, assigned to row and column"
 m = input("What size matrix would you like?")
@@ -19,8 +132,7 @@ def minimax(alpha, beta, board, depth, maximizing):
     pass
 
 "Board to interact, col to place, player to place corrosponding piece"
-def playerMove(board, col, player):
-    pass
+
 
 def gameLoop(board):
     while True:
