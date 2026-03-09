@@ -6,14 +6,14 @@ HUMAN = 1
 AI = 2
 
 class Disc:
-    "The disc object"
+    # The disc object
     def __init__(self, owner: int):
         self.owner = owner
-"Condition for the game to be over"
 
 def create_board(n: int):
     #creates the board with the given size
-    return [[EMPTY] * n for _ in range(n)]
+    board = [[EMPTY] * n for _ in range(n)]
+    return board
 
 
 def print_board(board):
@@ -121,15 +121,49 @@ def gameOver(board, M):
     return False
 
 "User input, assigned to row and column"
-m = input("What size matrix would you like?")
+m = int(input("What size matrix would you like?"))
 rows, cols = m
+
 "Creates the matrix"
 matrix = [[0]* cols for _ in range(rows)]
 
+def evaluation(board,M):
+    if(check_win(board,AI,M)):
+        return 1
+    elif(check_win(board,HUMAN,M)):
+        return -1
+    else:
+        return 0
+
 "Algorithm to check the what move AI will do"
-def minimax(alpha, beta, board, depth, maximizing):
+# If the full return the eval result
+# If its the AI's turn, 
+def minimax(alpha, beta, board, depth, maximizing, M):
+    if depth==0 or gameOver(board, M):
+        return  evaluation(board, M)
     
-    pass
+    if maximizing:
+        max_value = -math.inf
+        for col in valid_moves(board):
+            playerMove(board, col, AI)
+            value = minimax(alpha, beta, board, depth-1, False, M)
+            undoMove(board, col)
+            max_value = max(max_value, value)
+            alpha = max(alpha, max_value)
+            if alpha>=beta:
+                break
+        return max_value
+    else:
+        min_value = math.inf
+        for col in valid_moves(board):
+            playerMove(board, col, HUMAN)
+            value = minimax(alpha, beta, board, depth-1, True, M)
+            undoMove(board, col)
+            min_value = min(min_value, value)
+            beta = min(beta, min_value)
+            if alpha>=beta:
+                break
+        return min_value
 
 "Board to interact, col to place, player to place corrosponding piece"
 
