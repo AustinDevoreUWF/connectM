@@ -1,1 +1,4 @@
-# ConnectM ReadMe
+Usage: python connectM.py N M H
+  N = board size (3-10)
+  M = discs to connect (2-N)
+  H = who goes first: 1 = human, 0 = computer
