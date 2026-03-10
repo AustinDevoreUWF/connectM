@@ -23,7 +23,7 @@ def print_board(board):
             row += f" {ch} |"
         print(row)
         print(line)
-    print(" " + " ".join(f" {i+1}" for i in range(n)))
+    print(" " + "  ".join(f" {i+1}" for i in range(n)))
     print()
 
 
